@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--MyBatis配置文件-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.project.tang.dao.mapper.GetLikeMapper">
+    <select id="getMyLike" resultType="com.project.tang.dao.pojo.Moment">
+        SELECT a.id,a.title,a.content,a.create_date,
+               a.username,a.user_id,a.comment_number,a.nice
+        FROM `sc_moment` AS a,`sc_like` AS b
+        <where>
+            a.id = b.moment_id AND b.user_id=#{id};
+        </where>
+    </select>
+</mapper>

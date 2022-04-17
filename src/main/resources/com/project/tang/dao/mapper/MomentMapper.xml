@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--MyBatis配置文件-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.project.tang.dao.mapper.MomentMapper">
+    <update id="addCommentCounts">
+        UPDATE sc_moment  SET comment_number = comment_number + 1
+        <where>
+            id=#{id}
+        </where>
+    </update>
+    <update id="subCommentCounts">
+        UPDATE sc_moment  SET comment_number = comment_number - 1
+        <where>
+            id=#{id}
+        </where>
+    </update>
+    <update id="addNice">
+        UPDATE sc_moment  SET nice = nice + 1
+        <where>
+            id=#{id}
+        </where>
+    </update>
+    <update id="reduceNice">
+        UPDATE sc_moment  SET nice = nice - 1
+        <where>
+            id=#{id}
+        </where>
+    </update>
+</mapper>

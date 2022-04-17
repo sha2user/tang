@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--MyBatis配置文件-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.project.tang.dao.mapper.ArticleMapper">
+    <update id="addCommentCounts">
+        UPDATE sc_article  SET comment_counts = comment_counts + 1
+        <where>
+            id=#{id}
+        </where>
+    </update>
+    <update id="subCommentCounts">
+        UPDATE sc_article  SET comment_counts = comment_counts - 1
+        <where>
+            id=#{id}
+        </where>
+    </update>
+    <!--
+        那有什么办法来插入数据的时候就得到这个主键呢？
+    useGeneratedKeys=“true”     keyProperty=“id”
+    useGeneratedKeys设置为 true 时，表示如果插入的表id以自增列为主键，则允许 JDBC 支持自动生成主键，并可将自动生成的主键id返回。
+    useGeneratedKeys参数只针对 insert 语句生效，默认为 false；
+    ☆注意：
+        虽然有返回类型，但是我们不需要手动设置返回的类型，这个是由框架帮我们实现的，
+        所以对应的接口方法也是没有返回值的,会修改我们插入的对象，设置id值。
+        故在java中当执行insert操作后，下一步代码直接通过article.getId()获取刚刚插入数据时生成的主键即可。
+    -->
+    <insert id="addArticle" useGeneratedKeys="true" keyProperty="id" parameterType="com.project.tang.dao.pojo.Article">
+        INSERT INTO sc_article SET title = #{title},create_date = #{createDate}, category_name = #{categoryName},
+                     author = #{author},id=#{id},view_counts=#{viewCounts},comment_counts = #{commentCounts};
+    </insert>
+</mapper>

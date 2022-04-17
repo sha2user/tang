@@ -83,4 +83,25 @@ public class MomentController {
         }
     }
 
+    @GetMapping("selectByKey/{title}")
+    public Result selectByKey(@PathVariable("title")String title){
+        return momentService.selectByKey(title);
+    }
+
+    @GetMapping("selectMyMoment/{username}")
+    public Result selectMyMoment(@PathVariable("username")String username){
+        return momentService.selectMyMoment(username);
+    }
+
+    @GetMapping("selectMyComment/{username}")
+    public Result selectMyComment(@PathVariable("username")String username){
+        return momentService.selectMyComment(username);
+    }
+
+    @GetMapping("selectMyLike/{userId}")
+    public Result selectMyLike(@PathVariable("userId")String userId){
+        return momentService.selectMyLike(userId);
+    }
+
+
 }

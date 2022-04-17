@@ -133,10 +133,21 @@ public class UserServiceImpl implements UserService {
         if( StringUtils.isBlank(token) || StringUtils.isBlank(oldPass) || StringUtils.isBlank(checkPass)){
             return Result.fail(ErrorCode.PARAMS_ERROR.getCode(),ErrorCode.PARAMS_ERROR.getMsg());
         }
-        User user=this.checkToken(token);
-        user.setPassword(checkPass);
-        userMapper.updateById(user);
-        return Result.success(null);
+        User user=this.checkToken(token); //此user和user1为同一个user，只不过user不含有password属性
+        Long id = user.getId();
+        User user1 = userMapper.selectById(id);
+        String password = user1.getPassword();
+
+        if(oldPass.equals(password) ){
+            user.setPassword(checkPass);
+            userMapper.updateById(user);
+            return Result.success(null);
+
+        }else{
+            //前端传入的旧密码与数据库不匹配
+            return Result.fail(ErrorCode.PARAMS_ERROR.getCode(),ErrorCode.PARAMS_ERROR.getMsg());
+        }
+
     }
 
     @Override

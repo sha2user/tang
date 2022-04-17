@@ -12,4 +12,8 @@ public interface MomentService {
     Result getLikeMoList();
     Result addArticle(MomentParam momentParam);
     Result removeMoment(String sid);
+    Result selectByKey(String title);
+    Result selectMyMoment(String username);
+    Result selectMyComment(String username);
+    Result selectMyLike(String username);
 }

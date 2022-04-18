@@ -14,10 +14,8 @@ import com.project.tang.dao.pojo.Category;
 import com.project.tang.service.ArticleService;
 import com.project.tang.vo.ErrorCode;
 import com.project.tang.vo.Result;
-import com.project.tang.vo.params.ArticleParam;
-import com.project.tang.vo.params.PageParam;
+import com.project.tang.vo.params.*;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -77,7 +75,7 @@ public class ArticleServiceImpl implements ArticleService {
     public Result getPicArticle() {
         QueryWrapper<Article> queryWrapper=new QueryWrapper<>();
         queryWrapper.orderByDesc("create_date")
-                .like("category_name","图片资讯")
+                .eq("category_name","图片")
                 .last("limit 4");
         List<Article> articles = articleMapper.selectList(queryWrapper);
         return Result.success(articles);
@@ -91,6 +89,70 @@ public class ArticleServiceImpl implements ArticleService {
         List<Article> articles = articleMapper.selectList(queryWrapper);
         return Result.success(articles);
     }
+
+    @Override
+    public Result getAllArticleNumber() {
+        QueryWrapper<Article> queryWrapper=new QueryWrapper<>();
+        queryWrapper.ne("category_name","图片")
+                .orderByDesc("create_date");
+        int number = articleMapper.selectCount(queryWrapper);
+        return Result.success(number);
+    }
+
+    @Override
+    public Result getCurrent(PageParamSecond pageParamSecond) {
+        int currentPage=Integer.parseInt(pageParamSecond.getCurrentPage());
+        int pageSize=Integer.parseInt(pageParamSecond.getPageSize());
+        if( (currentPage==0) || (pageSize==0)){
+            return Result.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
+        }
+        QueryWrapper<Article> queryWrapper=new QueryWrapper<>();
+        Page<Article> page=new Page<>(currentPage,pageSize);
+        queryWrapper.orderByDesc("create_date")
+                .ne("category_name","图片");
+        Page<Article> articlePage = articleMapper.selectPage(page, queryWrapper);
+        List<Article> list=articlePage.getRecords();
+        return Result.success(list);
+    }
+
+    @Override
+    public Result updateArticle(SecondArticleParam articleParam) {
+        Long id = Long.valueOf(articleParam.getId());
+        String title= articleParam.getTitle();
+        String author =articleParam.getAuthor();
+        Integer viewCounts = Integer.valueOf(articleParam.getViewCounts());
+        Integer commentCounts =Integer.valueOf(articleParam.getCommentCounts());
+        Long time = Long.valueOf(articleParam.getCreateDate());
+        String categoryName =articleParam.getCategoryName();
+        QueryWrapper<Article> queryWrapper = new QueryWrapper<>();
+        Article article = articleMapper.selectById(id);
+        article.setTitle(title);
+        article.setAuthor(author);
+        article.setViewCounts(viewCounts);
+        article.setCommentCounts(commentCounts);
+        article.setCreateDate(time);
+        article.setCategoryName(categoryName);
+        articleMapper.updateById(article);
+        return Result.success(null);
+    }
+
+    @Override
+    public Result selectArticle(String keyWord) {
+        //管理端关键字查询
+        QueryWrapper<Article> queryWrapper = new QueryWrapper<>();
+        queryWrapper.ne("category_name","图片")
+                .like("title",keyWord)
+                .or()
+                    .like("category_name",keyWord)
+                .or()
+                    .like("author",keyWord)
+                .orderByDesc("create_date");
+        List<Article> articles = articleMapper.selectList(queryWrapper);
+        return Result.success(articles);
+
+    }
+
+
 
     @Override
     public Result getListByCategory(String name) {
@@ -107,6 +169,7 @@ public class ArticleServiceImpl implements ArticleService {
             return Result.fail(ErrorCode.PARAMS_ERROR.getCode(),ErrorCode.PARAMS_ERROR.getMsg());
         }
         Long articleId= Long.valueOf(sid);
+
         //删除article 和  article_body
         articleMapper.deleteById(articleId);
         //删除article_comment
@@ -144,16 +207,7 @@ public class ArticleServiceImpl implements ArticleService {
         articleBody.setArticleId(article.getId());
         articleBody.setContent(content);
         articleBodyMapper.insert(articleBody);
-        //添加category
-        QueryWrapper<Category> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("category_name",categoryName);
-        List<Category> categories = categoryMapper.selectList(queryWrapper);//查询数据库中的category表,是否有相等的类别
-        if(categories.isEmpty()){
-            //如果为空，则数据库不存在该类别，进行添加
-            Category category = new Category();
-            category.setCategoryName(categoryName);
-            categoryMapper.insert(category);
-        }
+
 
         return Result.success(null);
     }

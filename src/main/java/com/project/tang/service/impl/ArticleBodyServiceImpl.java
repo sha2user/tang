@@ -8,6 +8,7 @@ import com.project.tang.dao.pojo.ArticleBody;
 import com.project.tang.service.ArticleBodyService;
 import com.project.tang.vo.ErrorCode;
 import com.project.tang.vo.Result;
+import com.project.tang.vo.params.ContentParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,28 @@ public class ArticleBodyServiceImpl implements ArticleBodyService {
         article.setViewCounts(newViewCounts);
         articleMapper.updateById(article);
         return Result.success(articleBody);
+    }
+
+    @Override
+    public Result submitContent(ContentParam contentParam) {
+        String content = contentParam.getContent();
+        String sid = contentParam.getArticleId();
+        if(StringUtils.isAnyBlank(sid,content)){
+            return  Result.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
+        }
+        Long articleId =Long.valueOf(sid);
+
+        QueryWrapper<ArticleBody> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("article_id",articleId);
+        ArticleBody articleBody = articleBodyMapper.selectOne(queryWrapper);
+        if(articleBody.getContent() == content){
+            return Result.success(null);
+        }else{
+            articleBody.setContent(content);
+            articleBodyMapper.updateById(articleBody);
+            return Result.success(null);
+        }
+
     }
 
 }

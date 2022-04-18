@@ -4,10 +4,7 @@ import com.project.tang.service.LikeService;
 import com.project.tang.service.MomentCommentService;
 import com.project.tang.service.MomentService;
 import com.project.tang.vo.Result;
-import com.project.tang.vo.params.ArticleParam;
-import com.project.tang.vo.params.LikeParam;
-import com.project.tang.vo.params.MomentCommentParam;
-import com.project.tang.vo.params.MomentParam;
+import com.project.tang.vo.params.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -83,9 +80,19 @@ public class MomentController {
         }
     }
 
-    @GetMapping("selectByKey/{title}")
-    public Result selectByKey(@PathVariable("title")String title){
-        return momentService.selectByKey(title);
+    @PostMapping("getCurrent")
+    public Result getCurrent(@RequestBody PageParamSecond pageParamSecond){
+        return momentService.getCurrent(pageParamSecond);
+    }
+
+    @PostMapping("updateMoment")
+    public Result updateMoment(@RequestBody MomentUpdate momentUpdate){
+        return momentService.updateMoment(momentUpdate);
+    }
+
+    @GetMapping("selectMoment/{keyWord}")
+    public Result selectMoment(@PathVariable("keyWord")String keyWord){
+        return momentService.selectMoment(keyWord);
     }
 
     @GetMapping("selectMyMoment/{username}")
@@ -102,6 +109,8 @@ public class MomentController {
     public Result selectMyLike(@PathVariable("userId")String userId){
         return momentService.selectMyLike(userId);
     }
+
+
 
 
 }

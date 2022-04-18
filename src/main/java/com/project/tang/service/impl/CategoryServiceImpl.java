@@ -18,6 +18,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Result getCategoryList() {
         QueryWrapper<Category> queryWrapper = new QueryWrapper<>();
+        queryWrapper.ne("category_name","图片");
         List<Category> categories = categoryMapper.selectList(queryWrapper);
         return Result.success(categories);
     }

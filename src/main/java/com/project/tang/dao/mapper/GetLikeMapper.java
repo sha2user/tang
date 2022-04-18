@@ -7,4 +7,5 @@ import java.util.List;
 @Repository
 public interface GetLikeMapper {
     List<Moment> getMyLike(Long id);
+    List<Moment> selectMyComment(String username);
 }

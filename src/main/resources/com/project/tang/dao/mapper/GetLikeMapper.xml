@@ -11,4 +11,7 @@
             a.id = b.moment_id AND b.user_id=#{id};
         </where>
     </select>
+    <select id="selectMyComment" resultType="com.project.tang.dao.pojo.Moment">
+        SELECT * FROM sc_moment WHERE (id IN (SELECT moment_id FROM sc_moment_comment WHERE username = #{username}))
+    </select>
 </mapper>

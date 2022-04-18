@@ -1,6 +1,7 @@
 package com.project.tang.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.project.tang.dao.mapper.GetLikeMapper;
 import com.project.tang.dao.mapper.LikeMapper;
 import com.project.tang.dao.mapper.MomentCommentMapper;
@@ -10,6 +11,8 @@ import com.project.tang.service.MomentService;
 import com.project.tang.vo.ErrorCode;
 import com.project.tang.vo.Result;
 import com.project.tang.vo.params.MomentParam;
+import com.project.tang.vo.params.MomentUpdate;
+import com.project.tang.vo.params.PageParamSecond;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -119,12 +122,44 @@ public class MomentServiceImpl implements MomentService {
     }
 
     @Override
-    public Result selectByKey(String title) {
-        if(StringUtils.isBlank(title)){
+    public Result getCurrent(PageParamSecond pageParamSecond) {
+        int currentPage=Integer.parseInt(pageParamSecond.getCurrentPage());
+        int pageSize=Integer.parseInt(pageParamSecond.getPageSize());
+        if( (currentPage==0) || (pageSize==0)){
+            return Result.fail(ErrorCode.PARAMS_ERROR.getCode(), ErrorCode.PARAMS_ERROR.getMsg());
+        }
+        QueryWrapper<Moment> queryWrapper=new QueryWrapper<>();
+        Page<Moment> page=new Page<>(currentPage,pageSize);
+        queryWrapper.orderByDesc("create_date");
+        Page<Moment> momentPage = momentMapper.selectPage(page, queryWrapper);
+        List<Moment> list=momentPage.getRecords();
+        return Result.success(list);
+    }
+
+    @Override
+    public Result updateMoment(MomentUpdate momentUpdate) {
+        Long id = Long.valueOf(momentUpdate.getId());
+        String title= momentUpdate.getTitle();
+        String content = momentUpdate.getContent();
+        Long createDate = Long.valueOf(momentUpdate.getCreateDate());
+        QueryWrapper<Moment> queryWrapper = new QueryWrapper<>();
+        Moment moment = momentMapper.selectById(id);
+        moment.setTitle(title);
+        moment.setContent(content);
+        moment.setCreateDate(createDate);
+        momentMapper.updateById(moment);
+        return Result.success(null);
+    }
+
+    @Override
+    public Result selectMoment(String keyWord) {
+        if(StringUtils.isBlank(keyWord)){
             Result.fail(ErrorCode.PARAMS_ERROR.getCode(),ErrorCode.PARAMS_ERROR.getMsg());
         }
         QueryWrapper<Moment> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like("title",title)
+        queryWrapper.like("title",keyWord)
+                .or()
+                    .like("username",keyWord)
                 .orderByDesc("create_date");
         List<Moment> moments = momentMapper.selectList(queryWrapper);
         return Result.success(moments);
@@ -151,21 +186,8 @@ public class MomentServiceImpl implements MomentService {
 
     @Override
     public Result selectMyComment(String username) {
-        QueryWrapper<MomentComment> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("username",username)
-                .select("moment_id");
-        if(momentCommentMapper.selectCount(queryWrapper) != 0){
-            List<MomentComment> momentComments = momentCommentMapper.selectList(queryWrapper);
-            QueryWrapper<Moment> queryWrapper1 = new QueryWrapper<>();
-            for(MomentComment momentComment : momentComments){
-                queryWrapper1.eq("id",momentComment.getMomentId());
-            }
-            queryWrapper1.orderByDesc("create_date");
-            List<Moment> moments = momentMapper.selectList(queryWrapper1);
-            return Result.success(moments);
-        }else{
-            return  Result.success(false);
-        }
+        List<Moment> moments = getLikeMapper.selectMyComment(username);
+        return Result.success(moments);
 
     }
 

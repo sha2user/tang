@@ -16,4 +16,5 @@ public class Moment {
     private Long userId;
     private Integer commentNumber;
     private Integer nice;
+    private String avatar;
 }

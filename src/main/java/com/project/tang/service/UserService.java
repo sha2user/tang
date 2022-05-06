@@ -15,4 +15,5 @@ public interface UserService {
     void saveUser(User user);
     Result changePass(String token,PasswordParam passwordParam);
     Result getUserList();
+    void setAvatarById(String sid, String fileUrl);
 }

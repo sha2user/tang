@@ -9,12 +9,14 @@
             id=#{id}
         </where>
     </update>
+
     <update id="subCommentCounts">
         UPDATE sc_article  SET comment_counts = comment_counts - 1
         <where>
             id=#{id}
         </where>
     </update>
+
     <!--
         那有什么办法来插入数据的时候就得到这个主键呢？
     useGeneratedKeys=“true”     keyProperty=“id”

@@ -2,10 +2,7 @@ package com.project.tang.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.project.tang.dao.mapper.GetLikeMapper;
-import com.project.tang.dao.mapper.LikeMapper;
-import com.project.tang.dao.mapper.MomentCommentMapper;
-import com.project.tang.dao.mapper.MomentMapper;
+import com.project.tang.dao.mapper.*;
 import com.project.tang.dao.pojo.*;
 import com.project.tang.service.MomentService;
 import com.project.tang.vo.ErrorCode;
@@ -28,12 +25,20 @@ public class MomentServiceImpl implements MomentService {
     private LikeMapper likeMapper;
     @Autowired
     private GetLikeMapper getLikeMapper;
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public Result getMomentList() {
         QueryWrapper<Moment> queryWrapper =new QueryWrapper<>();
         queryWrapper.orderByDesc("create_date");
         List<Moment> moments = momentMapper.selectList(queryWrapper);
+        //将每个moment中根据username，给avatar赋值
+        for (Moment moment:moments){
+            String username = moment.getUsername();
+            String avatarByUsername = userMapper.getAvatarByUsername(username);
+            moment.setAvatar(avatarByUsername);
+        }
         return Result.success(moments);
     }
 
@@ -47,6 +52,11 @@ public class MomentServiceImpl implements MomentService {
         queryWrapper.eq("moment_id",id)
                 .orderByDesc("create_date");
         List<MomentComment> momentComments = momentCommentMapper.selectList(queryWrapper);
+        for (MomentComment momentComment:momentComments){
+            String username = momentComment.getUsername();
+            String avatarByUsername = userMapper.getAvatarByUsername(username);
+            momentComment.setAvatar(avatarByUsername);
+        }
         return Result.success(momentComments);
     }
 
@@ -66,6 +76,11 @@ public class MomentServiceImpl implements MomentService {
         queryWrapper.orderByDesc("comment_number")
                 .last("limit 5");
         List<Moment> moments = momentMapper.selectList(queryWrapper);
+        for (Moment moment:moments){
+            String username = moment.getUsername();
+            String avatarByUsername = userMapper.getAvatarByUsername(username);
+            moment.setAvatar(avatarByUsername);
+        }
         return Result.success(moments);
     }
 
@@ -75,11 +90,16 @@ public class MomentServiceImpl implements MomentService {
         queryWrapper.orderByDesc("nice")
                 .last("limit 5");
         List<Moment> moments = momentMapper.selectList(queryWrapper);
+        for (Moment moment:moments){
+            String username = moment.getUsername();
+            String avatarByUsername = userMapper.getAvatarByUsername(username);
+            moment.setAvatar(avatarByUsername);
+        }
         return Result.success(moments);
     }
 
     @Override
-    public Result addArticle(MomentParam momentParam) {
+    public Result addMoment(MomentParam momentParam) {
         String title=momentParam.getTitle();
         String sid = momentParam.getId();
         String username = momentParam.getUsername();
@@ -87,7 +107,7 @@ public class MomentServiceImpl implements MomentService {
         if(StringUtils.isAnyBlank(title,sid,username,content)){
             return Result.fail(ErrorCode.PARAMS_ERROR.getCode(),ErrorCode.PARAMS_ERROR.getMsg());
         }
-        //添加article
+        //添加moment
         Moment moment = new Moment();
         moment.setUserId(Long.valueOf(sid));
         moment.setCreateDate(System.currentTimeMillis());
@@ -162,6 +182,11 @@ public class MomentServiceImpl implements MomentService {
                     .like("username",keyWord)
                 .orderByDesc("create_date");
         List<Moment> moments = momentMapper.selectList(queryWrapper);
+        for (Moment moment:moments){
+            String username = moment.getUsername();
+            String avatarByUsername = userMapper.getAvatarByUsername(username);
+            moment.setAvatar(avatarByUsername);
+        }
         return Result.success(moments);
     }
 
@@ -176,6 +201,10 @@ public class MomentServiceImpl implements MomentService {
                 .orderByDesc("create_date");
         if(momentMapper.selectCount(queryWrapper) != 0){
             List<Moment> moments = momentMapper.selectList(queryWrapper);
+            for (Moment moment:moments){
+                String avatarByUsername = userMapper.getAvatarByUsername(username);
+                moment.setAvatar(avatarByUsername);
+            }
             return Result.success(moments);
         }else{
             //若为空，返回false，前端进行逻辑判定
@@ -187,6 +216,11 @@ public class MomentServiceImpl implements MomentService {
     @Override
     public Result selectMyComment(String username) {
         List<Moment> moments = getLikeMapper.selectMyComment(username);
+        for (Moment moment:moments){
+            String username1 = moment.getUsername();
+            String avatarByUsername = userMapper.getAvatarByUsername(username1);
+            moment.setAvatar(avatarByUsername);
+        }
         return Result.success(moments);
 
     }
@@ -199,6 +233,11 @@ public class MomentServiceImpl implements MomentService {
         if(myLike.isEmpty()){
             return Result.success(false);
         }else {
+            for (Moment moment:myLike){
+                String username = moment.getUsername();
+                String avatarByUsername = userMapper.getAvatarByUsername(username);
+                moment.setAvatar(avatarByUsername);
+            }
             return Result.success(myLike);
         }
     }

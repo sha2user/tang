@@ -3,8 +3,10 @@ package com.project.tang.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.project.tang.dao.mapper.ArticleCommentMapper;
 import com.project.tang.dao.mapper.ArticleMapper;
+import com.project.tang.dao.mapper.UserMapper;
 import com.project.tang.dao.pojo.Article;
 import com.project.tang.dao.pojo.ArticleComment;
+import com.project.tang.dao.pojo.Moment;
 import com.project.tang.service.ArticleCommentService;
 import com.project.tang.vo.ErrorCode;
 import com.project.tang.vo.Result;
@@ -21,6 +23,8 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
     private ArticleCommentMapper articleCommentMapper;
     @Autowired
     private ArticleMapper articleMapper;
+    @Autowired
+    private UserMapper userMapper;
     @Override
     public Result submitComment(ArticleCommentParam articleCommentParam) {
         String sid= articleCommentParam.getArticleId();
@@ -47,6 +51,11 @@ public class ArticleCommentServiceImpl implements ArticleCommentService {
         queryWrapper.orderByDesc("create_date")
                 .eq("article_id",articleId);
         List<ArticleComment> articleComments = articleCommentMapper.selectList(queryWrapper);
+        for (ArticleComment articleComment:articleComments){
+            String username = articleComment.getUsername();
+            String avatarByUsername = userMapper.getAvatarByUsername(username);
+            articleComment.setAvatar(avatarByUsername);
+        }
         return Result.success(articleComments);
     }
 

@@ -19,4 +19,5 @@ public class User {
     private String name;
     private String salt;
     private String token;
+    private String avatar;
 }

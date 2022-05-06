@@ -60,7 +60,7 @@ public class MomentController {
     @PostMapping("addMoment")
     public Result addMoment(@RequestBody MomentParam momentParam){
 
-        return momentService.addArticle(momentParam);
+        return momentService.addMoment(momentParam);
     }
 
     @GetMapping("removeMoment/{id}")

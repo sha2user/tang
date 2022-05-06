@@ -10,5 +10,7 @@ public class File {
     private Long id;
     private Long createDate;
     private String title;
-    private Object file;
+    private String url; //文件路径
+    private String username;
+    private String description;
 }

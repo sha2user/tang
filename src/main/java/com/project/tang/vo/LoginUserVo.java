@@ -8,4 +8,5 @@ public class LoginUserVo {
     private String username;
     private String admin;
     private String name;
+    private String avatar;
 }

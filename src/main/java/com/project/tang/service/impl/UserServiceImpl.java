@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
         }
         LambdaQueryWrapper<User> queryWrapper= new LambdaQueryWrapper<>();
         queryWrapper.eq(User::getToken,token)
-                .select(User::getId,User::getUsername,User::getAdmin,User::getName)
+                .select(User::getId,User::getUsername,User::getAdmin,User::getName,User::getAvatar) //获取用户信息
                 .last("limit 1");
         return userMapper.selectOne(queryWrapper);
     }
@@ -81,6 +81,7 @@ public class UserServiceImpl implements UserService {
         loginUserVo.setUsername(user.getUsername());
         loginUserVo.setAdmin(String.valueOf(user.getAdmin()));
         loginUserVo.setName(user.getName());
+        loginUserVo.setAvatar(user.getAvatar());
 
         return Result.success(loginUserVo);
     }
@@ -158,6 +159,14 @@ public class UserServiceImpl implements UserService {
         queryWrapper.eq("admin",admin);
         List<User> users = userMapper.selectList(queryWrapper);
         return Result.success(users);
+    }
+
+    @Override
+    public void setAvatarById(String sid, String fileUrl) {
+        Long id=Long.valueOf(sid);
+        User user = userMapper.selectById(id);
+        user.setAvatar(fileUrl);
+        userMapper.updateById(user);
     }
 
 }

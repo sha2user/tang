@@ -12,7 +12,7 @@ public interface MomentService {
     Result removeCommentById(String sid);
     Result getHotComList();
     Result getLikeMoList();
-    Result addArticle(MomentParam momentParam);
+    Result addMoment(MomentParam momentParam);
     Result removeMoment(String sid);
     Result getCurrent(PageParamSecond pageParamSecond);
     Result updateMoment(MomentUpdate momentUpdate);

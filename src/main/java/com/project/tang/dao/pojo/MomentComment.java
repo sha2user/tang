@@ -13,4 +13,5 @@ public class MomentComment {
     private String username;
     @JsonSerialize(using = ToStringSerializer.class)
     private Long momentId;
+    private String avatar;
 }

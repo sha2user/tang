@@ -8,7 +8,6 @@ import com.project.tang.vo.ErrorCode;
 import com.project.tang.vo.Result;
 import com.project.tang.vo.params.LoginParam;
 import com.project.tang.vo.params.RegisterParam;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -13,4 +13,5 @@ public class ArticleComment {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long articleId;
     private String username;
+    private String avatar;
 }

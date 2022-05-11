@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--MyBatis配置文件-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.project.tang.dao.mapper.SessionListMapper">
+    <resultMap id="BaseResultMap" type="com.project.tang.dao.pojo.SessionList">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="user_id" jdbcType="BIGINT" property="userId" />
+        <result column="to_user_id" jdbcType="BIGINT" property="toUserId" />
+        <result column="to_user_username" jdbcType="VARCHAR" property="toUserUsername" />
+        <result column="to_user_avatar" jdbcType="VARCHAR" property="toUserAvatar" />
+        <result column="create_date" jdbcType="BIGINT" property="createDate" />
+        <result column="un_read_count" jdbcType="INTEGER" property="unReadCount" />
+    </resultMap>
+    <update id="addUnReadCount">
+        UPDATE sc_session_list SET un_read_count = un_read_count + 1 WHERE user_id = #{userId} AND to_user_id = #{toUserId}
+    </update>
+
+    <select id="selectIdByUser" resultType="java.lang.Long">
+        SELECT id FROM sc_session_list WHERE user_id = #{userId} AND to_user_id = #{toUserId}
+    </select>
+
+    <select id="findByUserId" resultMap="BaseResultMap">
+        SELECT * FROM sc_session_list WHERE (user_id = #{userId} AND un_read_count !=0 ) ORDER BY create_date Desc
+    </select>
+</mapper>

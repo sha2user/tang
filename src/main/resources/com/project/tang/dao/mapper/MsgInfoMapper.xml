@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--MyBatis配置文件-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.project.tang.dao.mapper.MsgInfoMapper">
+    <resultMap id="BaseResultMap" type="com.project.tang.dao.pojo.MsgInfo">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="from_user_id" jdbcType="BIGINT" property="fromUserId" />
+        <result column="from_user_avatar" jdbcType="VARCHAR" property="fromUserAvatar" />
+        <result column="to_user_id" jdbcType="BIGINT" property="toUserId" />
+        <result column="to_user_avatar" jdbcType="VARCHAR" property="toUserAvatar" />
+        <result column="content" jdbcType="VARCHAR" property="content" />
+        <result column="create_date" jdbcType="BIGINT" property="createDate" />
+    </resultMap>
+    <select id="selectMessageList" resultMap="BaseResultMap">
+        SELECT * FROM sc_msg_info
+        <where>
+            (to_user_id = #{toUserId} AND from_user_id = #{fromUserId})
+            OR (to_user_id = #{fromUserId} AND from_user_id = #{toUserId})
+        </where>
+            ORDER BY create_date Asc
+    </select>
+
+    <insert id="addMsgInfo" useGeneratedKeys="true" keyProperty="id" parameterType="com.project.tang.dao.pojo.MsgInfo">
+        INSERT INTO sc_msg_info SET id=#{id},create_date = #{createDate}, content = #{content},
+            from_user_id = #{fromUserId},to_user_id=#{toUserId};
+    </insert>
+</mapper>

@@ -7,4 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository //添加该注解，消除idea中 userMapper等报错
 public interface UserMapper extends BaseMapper<User> {
     String getAvatarByUsername(String username);
+    String getAvatarById(Long id);
+    String getUsernameById(Long id);
+    Long selectIdByUsername(String s);
 }

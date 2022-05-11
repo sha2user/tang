@@ -6,4 +6,15 @@
     <select id="getAvatarByUsername" resultType="java.lang.String">
         SELECT avatar FROM `sc_user` WHERE username=#{username} LIMIT 1
     </select>
+    <select id="getAvatarById" resultType="java.lang.String">
+        SELECT avatar FROM `sc_user` WHERE id=#{id} LIMIT 1
+    </select>
+    <select id="getUsernameById" resultType="java.lang.String">
+        SELECT username FROM `sc_user` WHERE id=#{id} LIMIT 1
+    </select>
+    <select id="selectIdByUsername" resultType="java.lang.Long">
+        SELECT id FROM `sc_user` WHERE username=#{s} LIMIT 1
+    </select>
+
+
 </mapper>
